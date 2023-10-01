@@ -82,7 +82,7 @@ sequenceDiagram
     participant browser
     participant server
 
-    Note right of browser: The browser has a list of all notes from the server
+    Note right of browser: The browser fetches a list of all notes from the server
     browser ->> browser: Add submitted element to notes and re-render the page with new note
     browser ->> server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
     activate server
