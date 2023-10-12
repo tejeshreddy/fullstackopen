@@ -16,9 +16,11 @@ const App = () => {
   // let votes = Array.from({ length: anecdotes.length }, (_, index) => 0);
 
   const [selected, setSelected] = useState(0);
-  const [votes, setVotes] = useState(
-    Array.from({ length: anecdotes.length }, (_, index) => 0)
-  );
+  // Alternate way to create a 0 fill array
+  // const [votes, setVotes] = useState(
+  //   Array.from({ length: anecdotes.length }, (_, index) => 0)
+  // );
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
 
   const getRandomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
