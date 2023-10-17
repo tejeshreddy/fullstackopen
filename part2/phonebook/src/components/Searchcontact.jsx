@@ -2,7 +2,7 @@ import React from 'react';
 
 const Searchcontact = ({ searchByName, searchedNames }) => {
   return (
-    <div>
+    <>
       <h2>Search a Contact</h2>
       <div>
         Enter name to search: <input type="text" onChange={searchByName} />
@@ -18,7 +18,7 @@ const Searchcontact = ({ searchByName, searchedNames }) => {
       ) : (
         <>No results matched!</>
       )}
-    </div>
+    </>
   );
 };
 
