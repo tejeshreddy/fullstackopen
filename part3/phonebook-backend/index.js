@@ -50,15 +50,25 @@ app.get('/api/persons', (request, response) => {
 });
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const personInfo = persons.filter((person) => person.id === id);
-  if (personInfo.length === 1) {
-    return response.status(200).json(personInfo);
-  } else {
-    return response
-      .status(404)
-      .json({ error: 'Person info not found', status: 404 });
-  }
+  const id = String(request.params.id);
+  console.log(id);
+  // const personInfo = persons.filter((person) => person.id === id);
+
+  PhoneBook.findById(id)
+    .then((note) => {
+      if (note) {
+        return response.json(note);
+      } else {
+        return response
+          .status(404)
+          .json({ error: 'Contact with ID not found', status: 404 })
+          .end();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      response.status(500).json({ error: error, status: 500 }).end();
+    });
 });
 
 app.get('/info', (request, response) => {
@@ -86,21 +96,26 @@ app.post('/api/persons/', (request, response) => {
       .json({ error: 'Request body not present', status: 400 });
   }
 
-  const duplicatePerson = persons.filter((person) => person.name === body.name);
-
-  if (duplicatePerson.length > 0) {
-    return response
-      .status(400)
-      .json({ error: 'Contact with name is present', status: 400 });
-  }
-
-  const personContact = {
+  const personContact = new PhoneBook({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  };
-  persons = persons.concat(personContact);
-  return response.status(200).send(personContact);
+  });
+
+  personContact.save().then((savedNote) => {
+    response.json(savedNote);
+  });
+
+  // Ignoring the below for now
+  // const duplicatePerson = persons.filter((person) => person.name === body.name);
+
+  // if (duplicatePerson.length > 0) {
+  //   return response
+  //     .status(400)
+  //     .json({ error: 'Contact with name is present', status: 400 });
+  // }
+
+  // persons = persons.concat(personContact);
+  // return response.status(200).send(personContact);
 });
 
 const unknownEndpoint = (request, response) => {
