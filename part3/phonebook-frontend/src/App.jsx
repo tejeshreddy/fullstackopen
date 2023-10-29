@@ -77,14 +77,22 @@ const App = () => {
         id: newName + newPhone,
       };
 
-      phoneService.createContact(contact).then((response) => {
-        setPersons(persons.concat(response));
-        setNewName('');
-        setNotificationMessage({
-          message: `${newName} contact added to phone book`,
-          alertClass: 'success',
+      phoneService
+        .createContact(contact)
+        .then((response) => {
+          setPersons(persons.concat(response));
+          setNewName('');
+          setNotificationMessage({
+            message: `${newName} contact added to phone book`,
+            alertClass: 'success',
+          });
+        })
+        .catch((error) => {
+          setNotificationMessage({
+            message: String(error),
+            alertClass: 'error',
+          });
         });
-      });
     }
   };
 
