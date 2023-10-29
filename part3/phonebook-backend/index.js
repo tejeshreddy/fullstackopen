@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
+app.use(express.json());
 const morgan = require('morgan');
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method);
@@ -13,8 +15,6 @@ const requestLogger = (request, response, next) => {
 require('dotenv').config();
 
 app.use(cors());
-
-app.use(express.json());
 
 app.use(
   morgan(function (tokens, req, res) {
@@ -49,14 +49,13 @@ app.get('/api/persons', (request, response) => {
   });
 });
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   const id = String(request.params.id);
   console.log(id);
-  // const personInfo = persons.filter((person) => person.id === id);
 
   PhoneBook.findById(id)
     .then((note) => {
-      if (note) {
+      if (note.length) {
         return response.json(note);
       } else {
         return response
@@ -66,28 +65,36 @@ app.get('/api/persons/:id', (request, response) => {
       }
     })
     .catch((error) => {
-      console.log(error);
-      response.status(500).json({ error: error, status: 500 }).end();
+      next(error);
     });
 });
 
-app.get('/info', (request, response) => {
-  const currentTime = new Date();
-  response.send(
-    `<div>
+app.get('/info', (request, response, next) => {
+  PhoneBook.find({})
+    .then((persons) => {
+      const currentTime = new Date();
+
+      response.send(
+        `<div>
       <p>Phone book has info for ${persons.length} people</p>
 	  <p>${currentTime}<p>
     </div>`
-  );
+      );
+    })
+    .catch((err) => next(err));
 });
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id != id);
-  response.status(204).end();
+  const id = String(request.params.id);
+
+  PhoneBook.findByIdAndDelete(id)
+    .then((person) => {
+      return response.status(204).json(person);
+    })
+    .catch((error) => next(error));
 });
 
-app.post('/api/persons/', (request, response) => {
+app.post('/api/persons/', (request, response, next) => {
   const body = request.body;
 
   if (!body.name || !body.number) {
@@ -101,22 +108,39 @@ app.post('/api/persons/', (request, response) => {
     number: body.number,
   });
 
-  personContact.save().then((savedNote) => {
-    response.json(savedNote);
-  });
-
-  // Ignoring the below for now
-  // const duplicatePerson = persons.filter((person) => person.name === body.name);
-
-  // if (duplicatePerson.length > 0) {
-  //   return response
-  //     .status(400)
-  //     .json({ error: 'Contact with name is present', status: 400 });
-  // }
-
-  // persons = persons.concat(personContact);
-  // return response.status(200).send(personContact);
+  personContact
+    .save()
+    .then((savedPerson) => {
+      return response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body;
+  const person = { name: body.name, number: body.number };
+  PhoneBook.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.status(200).json(updatedPerson);
+    })
+    .catch((err) => next(err));
+});
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+  if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message });
+  }
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: error.message });
+  }
+  if (error.name === 'TypeError') {
+    return response.status(400).send({ error: error.message });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' });
