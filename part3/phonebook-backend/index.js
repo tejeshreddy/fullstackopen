@@ -38,11 +38,6 @@ app.use(express.static('dist'));
 // Mongo init and functions
 const PhoneBook = require('./models/phonebook');
 
-const generateId = () => {
-  const max = 10000;
-  return Math.floor(Math.random() * max);
-};
-
 app.get('/api/persons', (request, response) => {
   PhoneBook.find({}).then((persons) => {
     response.json(persons);
@@ -113,13 +108,19 @@ app.post('/api/persons/', (request, response, next) => {
     .then((savedPerson) => {
       return response.json(savedPerson);
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      return response.status(400).json({ error: error });
+    });
 });
 
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body;
   const person = { name: body.name, number: body.number };
-  PhoneBook.findByIdAndUpdate(request.params.id, person, { new: true })
+  PhoneBook.findByIdAndUpdate(request.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: 'query',
+  })
     .then((updatedPerson) => {
       response.status(200).json(updatedPerson);
     })
@@ -148,7 +149,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
