@@ -10,3 +10,34 @@ Content-Type: application/json
   "url": "blog/1",
   "likes": "100"
 }
+
+###
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "second post",
+  "author": "tejred",
+  "url": "blog/2"
+}
+
+
+###
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "second post",
+  "author": "tejred"
+}
+
+###
+DELETE http://localhost:3003/api/blogs/65455a470f8895c795927df8 HTTP/1.1
+
+###
+PUT http://localhost:3003/api/blogs/65455de6577f7bbf18f51222 HTTP/1.1
+Content-Type: application/json
+
+{
+  "likes": 100
+}

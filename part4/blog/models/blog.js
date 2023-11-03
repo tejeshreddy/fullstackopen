@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const config = require('../utils/config');
-const logger = require('../utils/logger');
-mongoose.set('strictQuery', false);
+const mongoose = require("mongoose");
+const config = require("../utils/config");
+const logger = require("../utils/logger");
+mongoose.set("strictQuery", false);
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -10,9 +10,17 @@ const blogSchema = new mongoose.Schema({
   likes: Number,
 });
 
+blogSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
+
 mongoose
   .connect(config.MONGODB_URI)
-  .then((result) => logger.info('Connection successful'))
-  .catch((error) => logger.error('Error with Mongo connection'));
+  .then((result) => logger.info("Connection successful"))
+  .catch((error) => logger.error("Error with Mongo connection"));
 
-module.exports = mongoose.model('Blog', blogSchema);
+module.exports = mongoose.model("Blog", blogSchema);
