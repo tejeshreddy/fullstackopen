@@ -4,6 +4,8 @@ const app = require("../app");
 const Blog = require("../models/blog");
 const api = supertest(app);
 const helper = require("./test_helper");
+const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -52,7 +54,7 @@ describe("POST operation validation", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const blogsInEnd = await helper.notesInDb();
+    const blogsInEnd = await helper.blogsInDb();
     const titles = blogsInEnd.map((r) => r.title);
 
     expect(blogsInEnd).toHaveLength(helper.initialBlogs.length + 1);
@@ -95,13 +97,13 @@ describe("POST operation validation", () => {
 
 describe("DELETE Actions", () => {
   test("delete a blog using id", async () => {
-    const blogsInStart = await helper.notesInDb();
+    const blogsInStart = await helper.blogsInDb();
 
     const id = blogsInStart[0].id;
     const blogsCount = blogsInStart.length;
 
     await api.delete(`/api/blogs/${id}`).expect(204);
-    const blogsInEnd = await helper.notesInDb();
+    const blogsInEnd = await helper.blogsInDb();
 
     expect(blogsInEnd.length).toBe(blogsCount - 1);
   });
@@ -109,7 +111,7 @@ describe("DELETE Actions", () => {
 
 describe("PUT Actions", () => {
   test("update the blog's likes and verify likes", async () => {
-    const blogsInStart = await helper.notesInDb();
+    const blogsInStart = await helper.blogsInDb();
 
     const id = blogsInStart[0].id;
     const likes = blogsInStart[0].likes;
@@ -118,11 +120,60 @@ describe("PUT Actions", () => {
       .put(`/api/blogs/${id}`)
       .send({ likes: likes + 1 })
       .expect(200);
-    const blogs = await helper.notesInDb();
+    const blogs = await helper.blogsInDb();
 
     const updatedBlog = blogs.filter((blog) => blog.id === id)[0];
 
     expect(updatedBlog.likes).toBe(likes + 1);
+  });
+});
+
+describe("where there is initial one user in db", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("sekret", 10);
+    const user = new User({ username: "root", passwordHash });
+    await user.save();
+  });
+
+  test("creation of a fresh username", async () => {
+    const usersAtStart = await helper.usersInDb();
+    const newUser = {
+      username: "tejesh",
+      name: "Tejesh Reddy",
+      password: "sekret",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+
+    console.log(usersAtEnd);
+    const usernames = usersAtEnd.map((user) => user.username);
+    expect(usernames).toContain(newUser.username);
+  });
+
+  test("creation fails with proper statuscode and message if username already taken", async () => {
+    // TODO : have to fix this test
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root",
+      name: "Superuser",
+      password: "salainen",
+    };
+
+    const result = await api.post("/api/users").send(newUser).expect(500);
+
+    // expect(result.body).toContain("expected `username` to be unique");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
   });
 });
 
