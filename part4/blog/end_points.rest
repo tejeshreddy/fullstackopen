@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3003/api/blogs/65455a470f8895c795927df8 HTTP/1.1
+DELETE http://localhost:3003/api/blogs/6549ba8a9c45faa584dc340f HTTP/1.1
 
 ###
 PUT http://localhost:3003/api/blogs/65455de6577f7bbf18f51222 HTTP/1.1
@@ -51,9 +51,9 @@ POST http://localhost:3003/api/users/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "garrix",
-    "name": "garrix",
-    "password": "garrix"
+    "username": "garrixmj",
+    "name": "garrixmj",
+    "password": "garrixmj"
 }
 
 ### Login
@@ -68,11 +68,15 @@ Content-Type: application/json
 ###
 POST http://localhost:3003/api/blogs/ HTTP/1.1
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhcnJpeCIsImlkIjoiNjU0OTc4ZGI4NDk0ZGQ2ZTMyNTI2NTY2IiwiaWF0IjoxNjk5MzE0MzcxfQ.13H6xBW-vxsSFhQUdLNpgh1eCPVEeurUTNYIT35K6xY
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhcnJpeCIsImlkIjoiNjU0OTc4ZGI4NDk0ZGQ2ZTMyNTI2NTY2IiwiaWF0IjoxNjk5Mzg1MDMyLCJleHAiOjE2OTkzODg2MzJ9.-n88MyG-F_PYE7SlxyQXdNbQPgQsWt7NZTNGjyobvLU
 
 {
   "title": "first post",
   "author": "tej",
-  "url": "blog/1",
+  "url": "blog/3",
   "likes": "100"
 }
+
+###
+DELETE http://localhost:3003/api/blogs/6549ba8a9c45faa584dc340f HTTP/1.1
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhcnJpeCIsImlkIjoiNjU0OTc4ZGI4NDk0ZGQ2ZTMyNTI2NTY2IiwiaWF0IjoxNjk5Mzg1MDMyLCJleHAiOjE2OTkzODg2MzJ9.-n88MyG-F_PYE7SlxyQXdNbQPgQsWt7NZTNGjyobvLU
