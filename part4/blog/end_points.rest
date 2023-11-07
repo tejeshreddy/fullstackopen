@@ -51,7 +51,28 @@ POST http://localhost:3003/api/users/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "root38",
-    "name": "Superuser",
-    "password": "satt"
+    "username": "garrix",
+    "name": "garrix",
+    "password": "garrix"
+}
+
+### Login
+POST http://localhost:3003/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "garrix",
+    "password": "garrix"
+}
+
+###
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhcnJpeCIsImlkIjoiNjU0OTc4ZGI4NDk0ZGQ2ZTMyNTI2NTY2IiwiaWF0IjoxNjk5MzE0MzcxfQ.13H6xBW-vxsSFhQUdLNpgh1eCPVEeurUTNYIT35K6xY
+
+{
+  "title": "first post",
+  "author": "tej",
+  "url": "blog/1",
+  "likes": "100"
 }
