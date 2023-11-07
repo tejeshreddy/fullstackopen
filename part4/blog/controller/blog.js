@@ -6,7 +6,14 @@ const logger = require("../utils/logger");
 require("express-async-errors");
 
 blogRouter.get("", async (request, response) => {
-  const blogs = await Blog.find({}).populate("user");
+  const token = request["token"];
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+
+  const blogs = await Blog.find({ user: decodedToken.id }).populate("user");
   response.json(blogs);
 });
 
