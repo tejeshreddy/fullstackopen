@@ -9,7 +9,7 @@ const middleware = require("./utils/middleware");
 
 app.use(cors());
 app.use(express.json());
-
+app.use(middleware.morganLogger);
 app.use("/api/blogs", middleware.tokenExtractor, blogRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
