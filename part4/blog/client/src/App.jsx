@@ -3,6 +3,8 @@ import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import Notification from './components/Notification';
+import Login from './components/Login';
+import Togglable from './components/Togglable';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -41,7 +43,13 @@ const App = () => {
       setUsername('');
       setPassword('');
     } catch (exception) {
-      console.log(exception);
+      setNotificationMessage({
+        message: 'Invalid Credentials',
+        alertClass: 'error',
+      });
+      setTimeout(() => {
+        setNotificationMessage({});
+      }, 5000);
     }
   };
 
@@ -73,29 +81,20 @@ const App = () => {
       {!user ? (
         <>
           <Notification notificationMessage={notificationMessage} />
-          <form onSubmit={handleLogin}>
-            <div>
-              <span>Username:</span>
-              <input
-                type="text"
-                name="Username"
-                value={username}
-                onChange={({ target }) => setUsername(target.value)}
-              />
-            </div>
-            <div>
-              <span>Password:</span>
-              <input
-                type="password"
-                name="Password"
-                value={password}
-                onChange={({ target }) => setPassword(target.value)}
-              />
-            </div>
-            <div>
-              <button type="submit">Login</button>
-            </div>
-          </form>
+
+          <Togglable buttonLabel="Login">
+            <Login
+              username={username}
+              password={password}
+              handleSubmit={handleLogin}
+              handleUsernameChange={({ target }) => {
+                setUsername(target.value);
+              }}
+              handlePasswordChange={({ target }) => {
+                setPassword(target.value);
+              }}
+            />
+          </Togglable>
         </>
       ) : (
         <>
