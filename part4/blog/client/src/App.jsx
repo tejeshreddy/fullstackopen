@@ -68,7 +68,7 @@ const App = () => {
       }, 5000);
     } catch (exception) {
       setNotificationMessage({
-        message: `Blog ${updatedBlog.title} has been updated successfully`,
+        message: `Blog ${blogToUpdate.title} has been updated successfully`,
         alertClass: 'error',
       });
     }
