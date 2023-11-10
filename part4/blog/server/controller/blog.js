@@ -66,24 +66,46 @@ blogRouter.delete("/:id", async (request, response) => {
       { new: true }
     );
     const deletedBlog = await Blog.findByIdAndDelete(id);
-    return response.status(204).json(deletedBlog);
+    response.status(200).json(deletedBlog.toJSON());
   } else {
     return response.status(401).json({ error: "unauthorized action" });
   }
 });
 
 blogRouter.put("/:id", async (request, response) => {
-  const id = request.params.id;
+  const token = request.token;
+  const body = request.body;
+  const decodedToken = jwt.verify(token, process.env.SECRET);
 
-  const blog = await Blog.findByIdAndUpdate(
-    id,
-    { likes: request.body.likes },
-    {
-      new: true,
-    }
-  );
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "token invalid" });
+  }
 
-  response.status(200).json(blog);
+  const user = await User.findById(decodedToken.id);
+  const blogToUpdate = await Blog.findById(request.params.id);
+
+  if (blogToUpdate.user._id.toString() === user._id.toString()) {
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+    };
+    console.log(blog);
+
+    try {
+      const updatedBlog = await Blog.findByIdAndUpdate(
+        request.params.id,
+        blog,
+        { new: true }
+      );
+      console.log(updatedBlog);
+
+      response.json(updatedBlog.toJSON());
+    } catch (exception) {}
+  } else {
+    return response.status(401).json({ error: `Unauthorized` });
+  }
 });
 
 module.exports = blogRouter;

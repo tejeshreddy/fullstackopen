@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import Notification from './components/Notification';
 import Login from './components/Login';
 import Togglable from './components/Togglable';
+import BlogForm from './components/BlogForm';
+
+const blogFormRef = React.createRef();
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [notificationMessage, setNotificationMessage] = useState({
     message: '',
     alertClass: '',
@@ -53,18 +53,35 @@ const App = () => {
     }
   };
 
+  const updateBlog = async (blogToUpdate) => {
+    try {
+      const updatedBlog = await blogService.updateBlog(blogToUpdate);
+      setNotificationMessage({
+        message: `Blog ${updatedBlog.title} has been updated successfully`,
+        alertClass: 'success',
+      });
+      setBlogs(
+        blogs.map((blog) => (blog.id !== updateBlog.id ? blog : updateBlog))
+      );
+      setTimeout(() => {
+        setNotificationMessage({});
+      }, 5000);
+    } catch (exception) {
+      setNotificationMessage({
+        message: `Blog ${updatedBlog.title} has been updated successfully`,
+        alertClass: 'error',
+      });
+    }
+  };
+
   const handleLogout = () => {
     setUser(null);
     window.localStorage.clear();
   };
 
-  const handleBlogCreation = async (event) => {
-    event.preventDefault();
-    const newBlog = await blogService.postBlog({
-      title: title,
-      author: author,
-      url: url,
-    });
+  const handleBlogCreation = async (blog) => {
+    blogFormRef.current.toggleVisibility();
+    const newBlog = await blogService.postBlog(blog);
 
     setBlogs(blogs.concat(newBlog));
     setNotificationMessage({
@@ -76,69 +93,71 @@ const App = () => {
     }, 5000);
   };
 
+  const byLikes = (b1, b2) => b2.likes - b1.likes;
+
+  const removeBlog = async (blog) => {
+    if (window.confirm(`Confirm deletion of ${blog.title} blog`)) {
+      try {
+        const deletedBlog = await blogService.removeBlog(blog);
+        console.log(deletedBlog);
+        setBlogs(blogs.filter((blog) => blog.id !== deletedBlog.id));
+        setNotificationMessage({
+          message: `Blog ${deletedBlog.title} has been deleted successfully`,
+          alertClass: 'success',
+        });
+        setTimeout(() => {
+          setNotificationMessage({});
+        }, 5000);
+      } catch (exception) {
+        setNotificationMessage({
+          message: `Blog ${blog.title} couldn't be deleted`,
+          alertClass: 'error',
+        });
+        setTimeout(() => {
+          setNotificationMessage({});
+        }, 5000);
+      }
+    }
+  };
+
   return (
     <>
+      <Notification notificationMessage={notificationMessage} />
       {!user ? (
         <>
-          <Notification notificationMessage={notificationMessage} />
-
-          <Togglable buttonLabel="Login">
-            <Login
-              username={username}
-              password={password}
-              handleSubmit={handleLogin}
-              handleUsernameChange={({ target }) => {
-                setUsername(target.value);
-              }}
-              handlePasswordChange={({ target }) => {
-                setPassword(target.value);
-              }}
-            />
-          </Togglable>
+          <Login
+            username={username}
+            password={password}
+            handleSubmit={handleLogin}
+            handleUsernameChange={({ target }) => {
+              setUsername(target.value);
+            }}
+            handlePasswordChange={({ target }) => {
+              setPassword(target.value);
+            }}
+          />
         </>
       ) : (
         <>
           <h2>blogs</h2>
-          <Notification notificationMessage={notificationMessage} />
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
+          <p>
+            {user.name} logged in <button onClick={handleLogout}>logout</button>
+          </p>
+
+          <Togglable buttonLabel="Add New Blog" ref={blogFormRef}>
+            <BlogForm handleBlogCreation={handleBlogCreation} />
+          </Togglable>
 
           <div>
-            {blogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} />
+            {blogs.sort(byLikes).map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateBlog={updateBlog}
+                removeBlog={removeBlog}
+              />
             ))}
           </div>
-          <h2>Create Blog Post</h2>
-          <form onSubmit={handleBlogCreation}>
-            <div>
-              <span>Title:</span>
-              <input
-                type="text"
-                name="title"
-                value={title}
-                onChange={({ target }) => setTitle(target.value)}
-              />
-            </div>
-            <div>
-              <span>Author:</span>
-              <input
-                type="text"
-                name="author"
-                value={author}
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-            </div>
-            <div>
-              <span>URL:</span>
-              <input
-                type="text"
-                name="url"
-                value={url}
-                onChange={({ target }) => setUrl(target.value)}
-              />
-            </div>
-            <button type="submit">Create New Blog</button>
-          </form>
         </>
       )}
     </>
