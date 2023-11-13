@@ -14,4 +14,10 @@ app.use("/api/blogs", middleware.tokenExtractor, blogRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
 
+if (process.env.NODE_ENV === "test") {
+  console.log("NODE_ENV test");
+  const testingRouter = require("./controller/testing");
+  app.use("/api/testing", testingRouter);
+}
+
 module.exports = app;

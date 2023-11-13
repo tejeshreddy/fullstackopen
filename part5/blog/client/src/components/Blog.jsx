@@ -27,11 +27,12 @@ const Blog = (props) => {
   };
 
   return (
-    <div style={blogStyle} className="note">
+    <div style={blogStyle} className="blog">
       <div>
         <div>
           {blog.title} - {blog.author}
           <button
+            id="visibility-switch-button"
             onClick={() => {
               setVisible(!visible);
             }}
@@ -42,10 +43,14 @@ const Blog = (props) => {
         <div style={showWhenVisible}>
           <p>{blog.url}</p>
           <p>
-            likes {blogObject.likes}
-            <button onClick={increaseLikeCount}>like</button>
+            <span className="likes">likes {blogObject.likes}</span>
+            <button onClick={increaseLikeCount} id="like-button">
+              like
+            </button>
           </p>
-          <button onClick={removeBlog}>remove</button>
+          <button onClick={removeBlog} id="remove-button">
+            remove
+          </button>
         </div>
       </div>
     </div>

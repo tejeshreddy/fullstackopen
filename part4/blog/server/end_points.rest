@@ -87,3 +87,7 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imdhc
 
 ###
 PUT http://localhost:3003/api/blogs/65495ecb2c0581b6bdaef86b
+
+
+###
+GET http://localhost:3003/api/testing/reset HTTP/1.1
