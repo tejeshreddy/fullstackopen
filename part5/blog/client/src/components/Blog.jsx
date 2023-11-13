@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const Blog = (props) => {
   const blog = props.blog;
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const buttonLabel = visible ? 'hide' : 'show';
   const showWhenVisible = { display: visible ? '' : 'none' };
   const [blogObject, setBlogObject] = useState(blog);
@@ -27,7 +27,7 @@ const Blog = (props) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="note">
       <div>
         <div>
           {blog.title} - {blog.author}
