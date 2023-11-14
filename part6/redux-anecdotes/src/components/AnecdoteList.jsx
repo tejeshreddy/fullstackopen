@@ -2,7 +2,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { increaseVoteCountByOne } from '../reducers/anecdoteReducer';
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => state);
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    if (filter === '') {
+      return anecdotes;
+    } else {
+      return anecdotes.filter((a) =>
+        a.content.toLowerCase().includes(filter.toLowerCase())
+      );
+    }
+  });
   const dispatch = useDispatch();
   return (
     <div>
