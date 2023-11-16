@@ -1,17 +1,17 @@
 # Full Stack Open
-Solutions to my [Full Stack](https://fullstackopen.com/) open course
+Solutions to [Full Stack Open](https://fullstackopen.com/)
 
-0. Part 0 - Fundamentals of Web apps
-1. Part 1 - Introduction to React
-2. Part 2 - Communicating with server
-3. Part 3 - Programming a server with NodeJS and Express
-4. Part 4 - Testing Express servers, user administration
-5. Part 5 - Testing React apps
-6. Part 6 - Advanced state management
-7. Part 7 - React router, custom hooks, styling app with CSS and webpack
-8. Part 8 - GraphQL
-9. Part 9 - TypeScript
-10. Part 10 - React Native
-11. Part 11 - CI/CD
-12. Part 12 - Containers
-13. Part 13 - Using relational databases
+1. Part 0 - Fundamentals of Web apps
+2. Part 1 - Introduction to React
+3. Part 2 - Communicating with server
+4. Part 3 - Programming a server with NodeJS and Express
+5. Part 4 - Testing Express servers, user administration
+6. Part 5 - Testing React apps
+7. Part 6 - Advanced state management
+8. Part 7 - React router, custom hooks, styling app with CSS and webpack
+9. Part 8 - GraphQL
+10. Part 9 - TypeScript
+11. Part 10 - React Native
+12. Part 11 - CI/CD
+13. Part 12 - Containers
+14. Part 13 - Using relational databases
