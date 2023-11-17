@@ -1,5 +1,5 @@
 # Full Stack Open
-Solutions to [Full Stack Open](https://fullstackopen.com/)
+Solutions to [Full Stack Open](https://fullstackopen.com/en)
 
 1. Part 0 - Fundamentals of Web apps
 2. Part 1 - Introduction to React
