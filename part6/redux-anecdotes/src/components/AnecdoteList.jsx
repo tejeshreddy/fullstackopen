@@ -1,8 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { increaseVoteCountByOne } from '../reducers/anecdoteReducer';
+import { increaseVoteCountByOne } from '../reducers/anecdoteSlice';
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(({ anecdotes, filter }) => {
+  const anecdotes = useSelector((state) => {
+    const anecdotes = state.anecdotes;
+    const filter = state.filter;
     if (filter === '') {
       return anecdotes;
     } else {
@@ -11,16 +13,15 @@ const AnecdoteList = () => {
       );
     }
   });
+
   const dispatch = useDispatch();
   return (
     <div>
-      {anecdotes
-        .sort((a, b) => b.votes - a.votes)
-        .map((anecdote) => (
-          <div key={anecdote.id}>
-            <div>{anecdote.content}</div>
+      {anecdotes.map((anecdote) => (
+        <div key={anecdote.id}>
+          <div>
+            {anecdote.content} - {anecdote.votes} votes
             <div>
-              has {anecdote.votes}
               <button
                 onClick={() => dispatch(increaseVoteCountByOne(anecdote.id))}
               >
@@ -28,7 +29,9 @@ const AnecdoteList = () => {
               </button>
             </div>
           </div>
-        ))}
+          <br />
+        </div>
+      ))}
     </div>
   );
 };

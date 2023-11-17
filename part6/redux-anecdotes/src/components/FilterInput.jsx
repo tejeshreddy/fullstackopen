@@ -1,18 +1,19 @@
 import { useDispatch } from 'react-redux';
-import { filterChange } from '../reducers/filterReducer';
+// import { filterChange } from '../reducers/filterReducer';
+import { setFilter } from '../reducers/filterSlice';
 
 const FilterInput = () => {
   const dispatch = useDispatch();
-
-  const setFilter = (event) => {
-    dispatch(filterChange(event.target.value));
-  };
 
   return (
     <>
       <p>Filter</p>
       <div>
-        <input type="text" name="filter" onChange={setFilter} />
+        <input
+          type="text"
+          name="filter"
+          onChange={(e) => dispatch(setFilter(e.target.value))}
+        />
       </div>
     </>
   );
