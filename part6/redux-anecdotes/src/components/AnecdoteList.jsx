@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { increaseVoteCountByOne } from '../reducers/anecdoteSlice';
+import { setNotification } from '../reducers/notificationSlice';
 
 const AnecdoteList = () => {
   const anecdotes = useSelector((state) => {
@@ -14,6 +15,14 @@ const AnecdoteList = () => {
     }
   });
 
+  const increaseVote = (anecdote) => {
+    dispatch(increaseVoteCountByOne(anecdote.id));
+    dispatch(setNotification('Vote count increased for ' + anecdote.content));
+    setTimeout(() => {
+      dispatch(setNotification(''));
+    }, 5000);
+  };
+
   const dispatch = useDispatch();
   return (
     <div>
@@ -22,11 +31,7 @@ const AnecdoteList = () => {
           <div>
             {anecdote.content} - {anecdote.votes} votes
             <div>
-              <button
-                onClick={() => dispatch(increaseVoteCountByOne(anecdote.id))}
-              >
-                vote
-              </button>
+              <button onClick={() => increaseVote(anecdote)}>vote</button>
             </div>
           </div>
           <br />

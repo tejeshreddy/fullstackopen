@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-// import { filterChange } from '../reducers/filterReducer';
 import { setFilter } from '../reducers/filterSlice';
 
 const FilterInput = () => {
