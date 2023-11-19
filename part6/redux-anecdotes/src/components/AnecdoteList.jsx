@@ -17,6 +17,7 @@ const AnecdoteList = () => {
 
   const increaseVote = (anecdote) => {
     dispatch(increaseVoteCountByOne(anecdote.id));
+
     dispatch(setNotification('Vote count increased for ' + anecdote.content));
     setTimeout(() => {
       dispatch(setNotification(''));
@@ -24,9 +25,12 @@ const AnecdoteList = () => {
   };
 
   const dispatch = useDispatch();
+
+  const sortedAnecdotes = [...anecdotes].sort((a, b) => b.votes - a.votes);
+
   return (
     <div>
-      {anecdotes.map((anecdote) => (
+      {sortedAnecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>
             {anecdote.content} - {anecdote.votes} votes
