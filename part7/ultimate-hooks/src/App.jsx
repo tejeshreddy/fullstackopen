@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-
-import { useResource } from './hooks/useResource';
 import Notification from './Notification';
 import { setMessage } from './slices/notificationSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { createNote, initializeNotes } from './slices/noteSlice';
+import { createPerson, initializePersons } from './slices/personSlice';
 
 const useField = (type) => {
   const [value, setValue] = useState('');
@@ -25,25 +25,30 @@ const App = () => {
   const number = useField('text');
   const dispatch = useDispatch();
 
-  const [notes, noteService] = useResource('http://localhost:3005/notes');
-  const [persons, personService] = useResource('http://localhost:3005/persons');
+  const notes = useSelector((state) => state.notes.list);
+  const persons = useSelector((state) => state.persons.list);
 
   useEffect(() => {
-    noteService.get();
-    personService.get();
-  }, []);
+    dispatch(initializeNotes());
+    dispatch(initializePersons());
+  }, [dispatch]);
 
   const handleNoteSubmit = async (event) => {
     event.preventDefault();
-    await noteService.create({ content: content.value });
-    await noteService.get();
+    dispatch(createNote(content.value));
+    // await noteService.create({ content: content.value, id: uuidv4() });
+    // await noteService.get();
     dispatch(setMessage('note pushed'));
   };
 
   const handlePersonSubmit = async (event) => {
     event.preventDefault();
-    await personService.create({ name: name.value, number: number.value });
-    await personService.get();
+    dispatch(
+      createPerson({
+        name: name.value,
+        number: number.value,
+      })
+    );
     dispatch(setMessage('person pushed'));
   };
 

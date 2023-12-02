@@ -9,7 +9,7 @@ import notificationReducer from './slices/notificationSlice';
 const store = configureStore({
   reducer: {
     notes: noteReducer,
-    person: personReducer,
+    persons: personReducer,
     notification: notificationReducer,
   },
 });

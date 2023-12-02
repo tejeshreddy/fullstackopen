@@ -6,7 +6,6 @@ const getAll = async (url) => {
 };
 
 const createObject = async (url, obj) => {
-  console.log(url, obj);
   const response = await axios.post(url, obj);
   return response.data;
 };
