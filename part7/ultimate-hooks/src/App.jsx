@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Notification from './Notification';
 import { setMessage } from './slices/notificationSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { createNote, initializeNotes } from './slices/noteSlice';
+import { createNote, increaseVote, initializeNotes } from './slices/noteSlice';
 import { createPerson, initializePersons } from './slices/personSlice';
 
 const useField = (type) => {
@@ -61,7 +61,16 @@ const App = () => {
         <button>create</button>
       </form>
       {notes.map((n) => (
-        <p key={n.id}>{n.content}</p>
+        <p key={n.id}>
+          {n.content} - {n.likes}
+          <button
+            type="button"
+            onClick={() => dispatch(increaseVote(n))}
+            key={n.id}
+          >
+            Like
+          </button>
+        </p>
       ))}
 
       <h2>persons</h2>
