@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
+const uuid = require('uuid');
 
 let authors = [
   {
@@ -101,8 +102,20 @@ const typeDefs = `
   type Query {
 	authorCount: Int,
 	bookCount: Int,
-	allBooks: [Book],
+	allBooks(author: String, genre: String): [Book],
 	allAuthors: [Author]
+  },
+  type Mutation {
+	addBook(
+		title: String!, 
+		author: String!,
+		published: Int!,
+		genres: [String]!
+	) : Book,
+	editAuthor(
+		name: String!,
+		setBornTo: Int!
+	): Author
   },
   type Book {
 	title: String,
@@ -113,6 +126,7 @@ const typeDefs = `
   type Author {
 	name: String,
 	bookCount: Int
+	born: Int
   }
 `;
 
@@ -120,12 +134,55 @@ const resolvers = {
   Query: {
     authorCount: () => authors.length,
     bookCount: () => books.length,
-    allBooks: () => books,
+    allBooks: (root, args) => {
+      let updatedBooks = books;
+
+      if (args.author) {
+        updatedBooks = updatedBooks.filter(
+          (book) => book.author === args.author
+        );
+      }
+      if (args.genre) {
+        updatedBooks = updatedBooks.filter((book) =>
+          book.genres.includes(args.genre)
+        );
+      }
+      return updatedBooks;
+    },
     allAuthors: () => {
       return authors.map((author) => ({
         name: author.name,
         bookCount: books.filter((book) => book.author == author.name).length,
+        born: author.born,
       }));
+    },
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const newBook = {
+        title: args.title,
+        author: args.author,
+        published: args.published,
+        genres: args.genres,
+      };
+      const author = authors.find((author) => author.name === args.author);
+
+      if (author === undefined) {
+        authors.push({ name: args.author, born: null, id: uuid.v4() });
+      }
+      books.push(newBook);
+      return newBook;
+    },
+    editAuthor: (root, args) => {
+      let authorToUpdate = authors.find((author) => author.name === args.name);
+      if (authorToUpdate) {
+        authorToUpdate = { ...authorToUpdate, born: args.setBornTo };
+        authors = authors.map((author) =>
+          author.name === args.name ? authorToUpdate : author
+        );
+        return authorToUpdate;
+      }
+      return {};
     },
   },
 };
