@@ -1,4 +1,4 @@
-const BMICalculator = (height: number, weight: number): string => {
+const calculateBmi = (height: number, weight: number): string => {
   const bmi: number = (weight * 100 * 100) / (height * height);
 
   let category: string = '';
@@ -35,4 +35,4 @@ const BMICalculator = (height: number, weight: number): string => {
   return category;
 };
 
-console.log(BMICalculator(180, 74));
+console.log(calculateBmi(180, 74));
