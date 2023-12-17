@@ -1,7 +1,26 @@
+interface bmiInterface {
+  height: number;
+  weight: number;
+}
+
+const parseBMIArguments = (args: string[]): bmiInterface => {
+  if (args.length == 4) {
+    const height = Number(args[2]);
+    const weight = Number(args[3]);
+
+    return { height, weight };
+  } else {
+    throw new Error(
+      'invalid number of arguments. Run ts-node bmiCalculator.ts <height> <weight>'
+    );
+  }
+};
+
 const calculateBmi = (height: number, weight: number): string => {
   const bmi: number = (weight * 100 * 100) / (height * height);
 
   let category: string = '';
+
   switch (true) {
     case bmi < 16.0:
       category = 'Underweight (Severe thinness)';
@@ -28,11 +47,21 @@ const calculateBmi = (height: number, weight: number): string => {
       category = 'Obese (Class III)';
       break;
     default:
-      category = 'Invalid BMI';
+      category = 'Invalid BMI. Run ts-node bmiCalculator.ts <height> <weight>';
       break;
   }
 
   return category;
 };
 
-console.log(calculateBmi(180, 74));
+try {
+  const { height, weight } = parseBMIArguments(process.argv);
+  const result: string = calculateBmi(height, weight);
+  console.log(result);
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.';
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
