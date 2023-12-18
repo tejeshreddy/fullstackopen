@@ -8,14 +8,12 @@ interface resultInterface {
   average: number;
 }
 
-const parseExerciseArguments = (args: string[]): number[] => {
+export const parseExerciseArguments = (args: string[]): number[] => {
   if (args.length >= 3) {
-    let exercises = [];
-
+    const exercises = [];
     for (let i = 2; i < args.length; i++) {
       exercises.push(Number(args[i]));
     }
-    console.log(exercises);
     return exercises;
   } else {
     throw new Error(
@@ -24,14 +22,17 @@ const parseExerciseArguments = (args: string[]): number[] => {
   }
 };
 
-const calculateExercises = (workoutHours: number[]): resultInterface => {
+export const calculateExercises = (
+  workoutHours: number[],
+  target: number
+): resultInterface => {
   const periodLength = workoutHours.length;
   const trainingDays = workoutHours.filter((x) => x != 0).length;
-  const success = calculateSuccess(periodLength, trainingDays);
+
   const totalHours = workoutHours.reduce((total, hours) => total + hours, 0);
   const average = trainingDays > 0 ? totalHours / trainingDays : 0;
+  const success = average > target ? true : false;
   const rating = calculateRating(average);
-  const target = 2;
   const ratingDescription = getRatingDescription(rating);
 
   const result: resultInterface = {
@@ -58,16 +59,6 @@ const getRatingDescription = (rating: number): string => {
   }
 };
 
-const calculateSuccess = (
-  periodLength: number,
-  trainingDays: number
-): boolean => {
-  if (trainingDays * 2 > periodLength) {
-    return true;
-  }
-  return false;
-};
-
 const calculateRating = (average: number): number => {
   if (average >= 2) {
     return 3;
@@ -77,8 +68,3 @@ const calculateRating = (average: number): number => {
     return 1;
   }
 };
-
-try {
-  const args = parseExerciseArguments(process.argv);
-  const result: resultInterface = calculateExercises(args);
-} catch (error) {}
